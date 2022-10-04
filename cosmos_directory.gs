@@ -52,7 +52,7 @@ function ShowAboutUs() {
  */
 async function COSMOSDIRECTORYAPR(chain) {
     const chainData = await get_chain_data(chain);
-    if (chainData.params.hasOwnProperty('calculated_apr')) {
+    if (chainData?.params?.hasOwnProperty('calculated_apr')) {
         return (chainData.params.calculated_apr * 100).toFixed(2);
     }
 
@@ -72,10 +72,10 @@ async function COSMOSDIRECTORYAPR(chain) {
  * @return {array|float} If token is given it will return amount of the balance
  */
 async function COSMOSDIRECTORYBALANCE(chain, walletAddress, token) {
-    const url = 'https://rest.cosmos.directory/'+chain+'/cosmos/bank/v1beta1/balances/'+walletAddress;
+    const url = `https://rest.cosmos.directory/${chain}/cosmos/bank/v1beta1/balances/${walletAddress}`;
     const res = await UrlFetchApp.fetch(url);
     const data = JSON.parse(res.getContentText());
-    if (!data.hasOwnProperty('balances')) {
+    if (!data?.balances) {
         console.error('Failed to fetch wallet balance', url);
         throw new Error('Failed to fetch wallet balance');
     }
@@ -128,15 +128,17 @@ async function COSMOSDIRECTORYVALCOMMISSION(chain, valoper) {
  * @return array
  */
 async function get_chain_data(chain) {
-    const url = 'https://chains.cosmos.directory/'+chain;
-    const res = await UrlFetchApp.fetch(url);
-    const data = JSON.parse(res.getContentText());
-    if (!data.hasOwnProperty('chain')) {
-        console.error('Failed to fetch chain', url);
-        throw new Error('Failed to fetch chain');
-    }
+    return with_cache(chain, async () => {
+        const url = `https://chains.cosmos.directory/${chain}`;
+        const res = await UrlFetchApp.fetch(url);
+        const data = JSON.parse(res.getContentText());
+        if (!data?.chain) {
+            console.error('Failed to fetch chain', url);
+            throw new Error('Failed to fetch chain');
+        }
 
-    return data.chain;
+        return data.chain;
+    }, 60 * 5)
 }
 
 /**
@@ -148,16 +150,26 @@ async function get_chain_data(chain) {
  * @return array
  */
 async function get_validator(chain, valoper) {
-    const url = 'https://validators.cosmos.directory/chains/'+chain+'/'+valoper;
-    const res = await UrlFetchApp.fetch(url);
-    const data = JSON.parse(res.getContentText());
-    console.log(data);
-    if (!data.hasOwnProperty('validator')) {
-        console.error('Failed to fetch validator', url);
-        throw new Error('Failed to fetch validator');
-    }
+    return with_cache(valoper, async () => {
+        const url = `https://validators.cosmos.directory/chains/${chain}/${valoper}`;
+        const res = await UrlFetchApp.fetch(url);
+        const data = JSON.parse(res.getContentText());
+        if (!data?.validator) {
+            console.error('Failed to fetch validator', url);
+            throw new Error('Failed to fetch validator');
+        }
+        return data.validator
+    }, 60 * 5)
+}
 
-    return data.validator;
+async function with_cache(key, getData, timeout) {
+    let cache = CacheService.getScriptCache();
+    let data = JSON.parse(cache.get(key))
+    if (!data) {
+        data = await getData()
+        cache.put(key, JSON.stringify(data), timeout)
+    }
+    return data;
 }
 
 async function test() {
