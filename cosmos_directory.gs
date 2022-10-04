@@ -101,7 +101,7 @@ async function COSMOSDIRECTORYBALANCE(chain, walletAddress, token) {
 async function COSMOSDIRECTORYTOTALDELEGATIONS(chain, valoper) {
     const validator = await get_validator(chain, valoper);
 
-    return validator?.delegations?.total_tokens_display;
+    return validator.tokens;
 }
 
 /**COSMOSDIRECTORYVALCOMMISSION
