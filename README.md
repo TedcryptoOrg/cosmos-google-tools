@@ -17,3 +17,7 @@ installed and you can now use the following functions.
 | COSMOSDIRECTORYBALANCE          | Retrieve blockchain wallet balance              |
 | COSMOSDIRECTORYTOTALDELEGATIONS | Retrieve blockchain validator total delegations | 
 | COSMOSDIRECTORYVALCOMMISSION    | Retrieve blockchain validator commission        |
+
+## Example
+
+https://docs.google.com/spreadsheets/d/16W4HHXb8JroFl9yasuJN3xNiyDj3yICAr5fYDR7-OYk/edit?usp=sharing
