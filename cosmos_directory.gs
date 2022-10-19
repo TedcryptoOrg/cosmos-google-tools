@@ -4,7 +4,7 @@
 /*=======================================================================================================================*
   Cosmos directory for google sheets by Josh_Lopes (Tedcrypto.io) and Tom (Eco-stake)
   =======================================================================================================================*
-  Version:      0.0.1
+  Version:      0.0.2
   Project Page: https://github.com/TedCryptoOrg/cosmos-google-tools
   Copyright:    (c) 2022 by Josh_Lopes (Tedcrypto.io) and Tom (Eco-stake)
   License:      MIT License
@@ -41,7 +41,7 @@ function ShowAboutUs() {
     )
 }
 
-/**COSMOSDIRECTORYAPR
+/**
  * Returns blockchain current APR.
  *
  *   =COSMOSDIRECTORYAPR("juno")
@@ -59,7 +59,7 @@ async function COSMOSDIRECTORYAPR(chain) {
     return 0;
 }
 
-/**COSMOSDIRECTORYBALANCE
+/**
  * Returns cryptocurrency balances into Google spreadsheets.
  *
  *   =COSMOSDIRECTORYBALANCE("juno", "juno1ytr0nujljr44t7kw2vhe566ecjz8mtn99c10pc")
@@ -68,10 +68,11 @@ async function COSMOSDIRECTORYAPR(chain) {
  * @param {string} chain
  * @param {string} walletAddress
  * @param {string|null} token
+ * @param {boolean} humanize
  *
  * @return {array|float} If token is given it will return amount of the balance
  */
-async function COSMOSDIRECTORYBALANCE(chain, walletAddress, token) {
+async function COSMOSDIRECTORYBALANCE(chain, walletAddress, token, humanize = false) {
     const url = `https://rest.cosmos.directory/${chain}/cosmos/bank/v1beta1/balances/${walletAddress}`;
     const res = await UrlFetchApp.fetch(url);
     const data = JSON.parse(res.getContentText());
@@ -82,29 +83,30 @@ async function COSMOSDIRECTORYBALANCE(chain, walletAddress, token) {
 
     if (token) {
         const tokenData = data.balances.find((item) => item.denom === token);
-        return tokenData ? tokenData.amount : 0;
+        return tokenData ? (humanise ? humanize_token_value(chain, tokenData.amount) : tokenData.amount): 0;
     }
 
-    return data.balances;
+    return humanize ? humanize_token_value(chain, data.balances) : data.balances;
 }
 
-/**COSMOSDIRECTORYTOTALDELEGATIONS
+/**
  * Gets validator total delegations (VP)
  *
  *   =COSMOSDIRECTORYTOTALDELEGATIONS("juno", "junovaloper14xmyp2hdd586frvl0d5mpqy5j9rjkt4khdp5hd")
  *
  * @param {string} chain
  * @param {string} valoper Validator address
+ * @param {boolean} humanize
  *
  * @return {float} Number of tokens
  */
-async function COSMOSDIRECTORYTOTALDELEGATIONS(chain, valoper) {
+async function COSMOSDIRECTORYTOTALDELEGATIONS(chain, valoper, humanize = false) {
     const validator = await get_validator(chain, valoper);
 
-    return validator.tokens;
+    return humanize ? humanize_token_value(chain, validator.tokens) : validator.tokens;
 }
 
-/**COSMOSDIRECTORYVALCOMMISSION
+/**
  * Returns current validator commission
  *
  *   =COSMOSDIRECTORYVALCOMMISSION("juno", "junovaloper14xmyp2hdd586frvl0d5mpqy5j9rjkt4khdp5hd")
@@ -125,7 +127,7 @@ async function COSMOSDIRECTORYVALCOMMISSION(chain, valoper) {
  *
  * @param {string} chain
  *
- * @return array
+ * @return {Promise<array>}
  */
 async function get_chain_data(chain) {
     return with_cache(chain, async () => {
@@ -147,7 +149,7 @@ async function get_chain_data(chain) {
  * @param {string} chain
  * @param {string} valoper Validator address
  *
- * @return array
+ * @return {Promise<array>}
  */
 async function get_validator(chain, valoper) {
     return with_cache(valoper, async () => {
@@ -162,6 +164,15 @@ async function get_validator(chain, valoper) {
     }, 60 * 5)
 }
 
+/**
+ * Get the data from cache or fetch it from a callback function
+ *
+ * @param {string} key Cache key name
+ * @param {function} getData Closure function to fetch data
+ * @param {int} timeout Timeout in seconds
+ *
+ * @returns {Promise<any>}
+ */
 async function with_cache(key, getData, timeout) {
     let cache = CacheService.getScriptCache();
     let data = JSON.parse(cache.get(key))
@@ -169,10 +180,22 @@ async function with_cache(key, getData, timeout) {
         data = await getData()
         cache.put(key, JSON.stringify(data), timeout)
     }
+
     return data;
 }
 
-async function test() {
-    console.log(await COSMOSDIRECTORYAPR("juno"));
-    //console.log(await get_validator("juno", "junovaloper14xmyp2hdd586frvl0d5mpqy5j9rjkt4khdp5hd"));
+/**
+ * Using chain exponent, normalises the tokens from utoken to token denomination
+ * e.g.: 1000000uatom = 1atom
+ *
+ * @param {string} chain
+ * @param {string} token
+ *
+ * @returns {Promise<number>}
+ */
+async function humanize_token_value(chain, token) {
+    const chainData = await get_chain_data(chain);
+    const exponent = Math.pow(10, chainData?.decimals);
+
+    return token / exponent;
 }

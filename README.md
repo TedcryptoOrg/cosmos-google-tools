@@ -9,7 +9,7 @@ Copy the `cosmos_directory.gs` file content to your google app script project. (
 ## Usage
 
 Once the script is installed you will see a new menu "Cosmos directory". That means your script was successfully
-installed and you can now use the following functions.
+installed, and you can now use the following functions.
 
 | Function                        | Description                                     |
 |---------------------------------|-------------------------------------------------|
@@ -17,6 +17,9 @@ installed and you can now use the following functions.
 | COSMOSDIRECTORYBALANCE          | Retrieve blockchain wallet balance              |
 | COSMOSDIRECTORYTOTALDELEGATIONS | Retrieve blockchain validator total delegations | 
 | COSMOSDIRECTORYVALCOMMISSION    | Retrieve blockchain validator commission        |
+
+If a function returns utokens, you can also send `humanize` argument as true to have its value converted to
+chain default denomination. E.g.: `COSMOSDIRECTORYBALANCE("cosmoshub", "cosmos1...", "atom", true)`
 
 ## Example
 
