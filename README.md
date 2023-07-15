@@ -17,6 +17,7 @@ installed, and you can now use the following functions.
 | COSMOSDIRECTORYBALANCE          | Retrieve blockchain wallet balance              |
 | COSMOSDIRECTORYTOTALDELEGATIONS | Retrieve blockchain validator total delegations | 
 | COSMOSDIRECTORYVALCOMMISSION    | Retrieve blockchain validator commission        |
+| COSMOSDIRECTORYCHAINPRICE       | Retrieve blockchain price                       |
 
 If a function returns utokens, you can also send `humanize` argument as true to have its value converted to
 chain default denomination. E.g.: `COSMOSDIRECTORYBALANCE("cosmoshub", "cosmos1...", "atom", true)`

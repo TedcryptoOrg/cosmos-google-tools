@@ -123,6 +123,23 @@ async function COSMOSDIRECTORYVALCOMMISSION(chain, valoper) {
 }
 
 /**
+ * Returns current chain price
+ *
+ *   =COSMOSDIRECTORYCHAINPRICE("juno"")
+ *   =COSMOSDIRECTORYCHAINPRICE("juno", "coingecko")
+ *
+ * @param {string} chain
+ * @param {string} dex
+ *
+ * @return {float} Chain price
+ */
+async function COSMOSDIRECTORYCHAINPRICE(chain, dex = undefined) {
+    const chainData = await get_chain_data(chain);
+
+    return chainData.prices[dex ?? 'coingecko'][chainData.display].usd;
+}
+
+/**
  * Get the chain data from cosmos directory
  *
  * @param {string} chain
