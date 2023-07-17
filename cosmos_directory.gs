@@ -4,9 +4,9 @@
 /*=======================================================================================================================*
   Cosmos directory for google sheets by Josh_Lopes (Tedcrypto.io) and Tom (Eco-stake)
   =======================================================================================================================*
-  Version:      0.0.2
+  Version:      0.0.3
   Project Page: https://github.com/TedCryptoOrg/cosmos-google-tools
-  Copyright:    (c) 2022 by Josh_Lopes (Tedcrypto.io) and Tom (Eco-stake)
+  Copyright:    (c) 2023 by Josh_Lopes (Tedcrypto.io) and Tom (Eco-stake)
   License:      MIT License
   ------------------------------------------------------------------------------------------------------------------------
   A library for importing blockchain data endpoints into Google spreadsheets. Functions include:
@@ -14,11 +14,14 @@
     COSMOSDIRECTORYBALANCE             Retrieve blockchain wallet balance
     COSMOSDIRECTORYTOTALDELEGATIONS    Retrieve blockchain validator total delegations
     COSMOSDIRECTORYVALCOMMISSION       Retrieve blockchain validator commission
+    COSMOSDIRECTORYCHAINPRICE          Retrieve blockchain validator commission
 
   For bug reports see https://github.com/TedCryptoOrg/cosmos-google-tools/issues
   ----------------------------------------------------------------------------------------------------------------------------
   Changelog:
 
+  0.0.3   17/07/23 Added Cosmos Directory chain price
+  0.0.2   x        Added cache system
   0.0.1   27/09/22 Release
   *========================================================================================================================*/
 
