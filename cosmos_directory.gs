@@ -4,7 +4,7 @@
 /*=======================================================================================================================*
   Cosmos directory for google sheets by Josh_Lopes (Tedcrypto.io) and Tom (Eco-stake)
   =======================================================================================================================*
-  Version:      0.0.3
+  Version:      0.0.4
   Project Page: https://github.com/TedCryptoOrg/cosmos-google-tools
   Copyright:    (c) 2023 by Josh_Lopes (Tedcrypto.io) and Tom (Eco-stake)
   License:      MIT License
@@ -20,6 +20,7 @@
   ----------------------------------------------------------------------------------------------------------------------------
   Changelog:
 
+  0.0.4   25/03/24 Fixed humaise vs humanize
   0.0.3   17/07/23 Added Cosmos Directory chain price
   0.0.2   x        Added cache system
   0.0.1   27/09/22 Release
@@ -86,7 +87,7 @@ async function COSMOSDIRECTORYBALANCE(chain, walletAddress, token, humanize = fa
 
     if (token) {
         const tokenData = data.balances.find((item) => item.denom === token);
-        return tokenData ? (humanise ? humanize_token_value(chain, tokenData.amount) : tokenData.amount): 0;
+        return tokenData ? (humanize ? humanize_token_value(chain, tokenData.amount) : tokenData.amount): 0;
     }
 
     return humanize ? humanize_token_value(chain, data.balances) : data.balances;
